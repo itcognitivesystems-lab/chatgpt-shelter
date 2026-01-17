@@ -1,46 +1,11 @@
-function doPost(e) {
-  var text = e && e.parameter && e.parameter.text
-    ? e.parameter.text
-    : "";
+<!DOCTYPE html>
+<html>
+<body>
 
-  if (!text) {
-    return ContentService
-      .createTextOutput("NO TEXT RECEIVED")
-      .setMimeType(ContentService.MimeType.TEXT);
-  }
+<form method="POST" action="https://script.google.com/macros/s/AKfycbz6vR_WEKMIsSsZDdGL9QtAFwW0Mah6iJgM_kOcIat8WfQIQiRiKdRZcqf0MFZzD8RW/exec">
+  <textarea name="text" rows="12" cols="40"></textarea><br>
+  <button type="submit">Send</button>
+</form>
 
-  var props = PropertiesService.getScriptProperties();
-
-  var queue = JSON.parse(props.getProperty("queue") || "[]");
-
-  queue.push({
-    ts: new Date().toISOString(),
-    text: text
-  });
-
-  props.setProperty("queue", JSON.stringify(queue));
-
-  return ContentService
-    .createTextOutput("RECEIVED. QUEUED.")
-    .setMimeType(ContentService.MimeType.TEXT);
-}
-
-function doGet(e) {
-  if (e && e.parameter && e.parameter.fetch === "latest") {
-    return fetchLatestResponse();
-  }
-
-  return ContentService
-    .createTextOutput(
-      "READY.\n\nPOST plain text using field name 'text'.\nGET with ?fetch=latest to retrieve response."
-    )
-    .setMimeType(ContentService.MimeType.TEXT);
-}
-
-function fetchLatestResponse() {
-  var props = PropertiesService.getScriptProperties();
-  var responses = JSON.parse(props.getProperty("responses") || "[]");
-
-  if (responses.length === 0) {
-    return ContentService
-      .createT
+</body>
+</html>
