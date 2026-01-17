@@ -1,11 +1,46 @@
-<!DOCTYPE html>
-<html>
-<body>
+function doPost(e) {
+  var text = e && e.parameter && e.parameter.text
+    ? e.parameter.text
+    : "";
 
-<form method="POST" action="PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE">
-  <textarea name="text" rows="12" cols="40"></textarea><br>
-  <button type="submit">Send</button>
-</form>
+  if (!text) {
+    return ContentService
+      .createTextOutput("NO TEXT RECEIVED")
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
 
-</body>
-</html>
+  var props = PropertiesService.getScriptProperties();
+
+  var queue = JSON.parse(props.getProperty("queue") || "[]");
+
+  queue.push({
+    ts: new Date().toISOString(),
+    text: text
+  });
+
+  props.setProperty("queue", JSON.stringify(queue));
+
+  return ContentService
+    .createTextOutput("RECEIVED. QUEUED.")
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+function doGet(e) {
+  if (e && e.parameter && e.parameter.fetch === "latest") {
+    return fetchLatestResponse();
+  }
+
+  return ContentService
+    .createTextOutput(
+      "READY.\n\nPOST plain text using field name 'text'.\nGET with ?fetch=latest to retrieve response."
+    )
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+function fetchLatestResponse() {
+  var props = PropertiesService.getScriptProperties();
+  var responses = JSON.parse(props.getProperty("responses") || "[]");
+
+  if (responses.length === 0) {
+    return ContentService
+      .createT
